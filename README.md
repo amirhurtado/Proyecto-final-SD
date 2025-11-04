@@ -12,7 +12,7 @@
 
 ---
 
-##  Plan de Acción Propuesto
+##  Plan de Acción 
 
 ### Fase 1: Configuración del Entorno Incus
 * Instalar Incus en la máquina anfitriona.
@@ -64,3 +64,22 @@
 ### 3. Clave de Fragmentación (Shard Key)
 * **Elección:** El campo `category`.
 * **Justificación:** El enunciado del proyecto sugiere dividir por categoría. Usar `category` como *Shard Key* implementa esta lógica directamente. Los productos con la misma categoría se agruparán en el mismo *shard*, lo que puede ser muy eficiente si las consultas suelen filtrar por este campo. Se analizarán las implicaciones de esta elección en la documentación final.
+
+
+
+###  Desarrollo de fases
+
+## Fase 1: Configuración del Entorno Incus
+
+Se configuró el entorno de virtualización usando **WSL 2** en Windows para disponer de un sistema Linux completo.  
+Dentro de este entorno se instaló y configuró **Incus**, que será el orquestador de los contenedores del proyecto.
+
+### Pasos realizados
+
+- Se habilitó **WSL 2** y se instaló **Ubuntu** como distribución base.  
+- Se instaló **Incus** mediante el gestor de paquetes `apt`.  
+- Se ejecutó `incus admin init` para la configuración inicial:
+- Se verificó que el servicio `incus` estuviera activo y corriendo.
+- Se comprobó la instalación con `incus list`, confirmando un entorno limpio y funcional.
+
+
