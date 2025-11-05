@@ -92,3 +92,47 @@ Dentro de este entorno se instaló y configuró **Incus**, que será el orquesta
 
 
 
+
+
+## Fase 2: Arquitectura del Clúster de Sharding (MongoDB)
+
+El objetivo de esta fase es la construcción de la infraestructura de base de datos distribuida. Utilizaremos **MongoDB Sharding** sobre contenedores Incus para garantizar escalabilidad horizontal y alta disponibilidad para la gestión de productos.
+
+### 2.1 Creación de Contenedores para el Shard 1 (Base de Datos 1)
+
+El primer paso es crear los contenedores que alojarán el primer *shard* (fragmento) de nuestra base de datos, incluyendo su réplica para garantizar la disponibilidad y tolerancia a fallos. Este conjunto formará nuestro primer *Replica Set*.
+
+#### 2.1.1 Diagnóstico de Imagen del Sistema Operativo
+
+Durante el proceso inicial, se detectó un problema al intentar descargar las imágenes de sistema operativo, resultando en el error **`The requested image couldn't be found`**. Esto se debió a un alias de imagen incorrecto.
+
+Se implementó la siguiente estrategia de diagnóstico:
+1.  Se utilizó el comando `incus image list images: | grep "ubuntu"` para consultar el catálogo del repositorio de imágenes por defecto (`images:`).
+2.  Esto reveló que el alias correcto para la versión de Ubuntu 22.04 es **`ubuntu/jammy`**.
+
+#### 2.1.2 Lanzamiento de Contenedores
+
+Con el alias verificado, se procedió a lanzar los dos contenedores que formarán el **Shard 1**.
+
+* **Creación del contenedor principal para el Shard 1:**
+    ```bash
+    incus launch images:ubuntu/jammy shard1-primary
+    ```
+
+* **Creación del contenedor para la réplica del Shard 1:**
+    ```bash
+    incus launch images:ubuntu/jammy shard1-replica
+    ```
+
+#### 2.1.3 Verificación Inicial de Contenedores
+
+Se verificó la correcta creación y ejecución de los contenedores con `incus list`, confirmando que todos están en estado `RUNNING` y han recibido IPs internas en la red `incusbr0`.
+
+```code
++----------------+---------+----------------------+------------------------------------------------+-----------+-----------+
+|      NAME      |  STATE  |         IPV4         |                      IPV6                      |   TYPE    | SNAPSHOTS |
++----------------+---------+----------------------+------------------------------------------------+-----------+-----------+
+| incus-ui       | RUNNING | 10.138.89.109 (eth0) | fd42:ef06:f622:9a08:1266:6aff:fe0c:28fe (eth0) | CONTAINER | 0         |
+| shard1-primary | RUNNING | 10.138.89.122 (eth0) | fd42:ef06:f622:9a08:1266:6aff:fe5f:937e (eth0) | CONTAINER | 0         |
+| shard1-replica | RUNNING | 10.138.89.241 (eth0) | fd42:ef06:f622:9a08:1266:6aff:fe41:9c80 (eth0) | CONTAINER | 0         |
++----------------+---------+----------------------+------------------------------------------------+-----------+-----------+

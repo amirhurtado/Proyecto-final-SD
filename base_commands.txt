@@ -14,3 +14,7 @@ incus start incus-ui
 #ver ip
 hostname -I
 https://<IP_DE_TU_WSL>:8443/
+
+
+#crear contenedores
+ incus launch images:ubuntu/jammy name
