@@ -104,8 +104,6 @@ El primer paso es crear los contenedores que alojarán el primer *shard* (fragme
 
 #### 2.1.1 Diagnóstico de Imagen del Sistema Operativo
 
-Durante el proceso inicial, se detectó un problema al intentar descargar las imágenes de sistema operativo, resultando en el error **`The requested image couldn't be found`**. Esto se debió a un alias de imagen incorrecto.
-
 Se implementó la siguiente estrategia de diagnóstico:
 1.  Se utilizó el comando `incus image list images: | grep "ubuntu"` para consultar el catálogo del repositorio de imágenes por defecto (`images:`).
 2.  Esto reveló que el alias correcto para la versión de Ubuntu 22.04 es **`ubuntu/jammy`**.
