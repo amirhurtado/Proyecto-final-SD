@@ -154,21 +154,23 @@ Instalación de MongoDB:
 Dentro del contenedor, se ejecutaron los comandos estándar para añadir el repositorio oficial de MongoDB 7.0 para Ubuntu 22.04 (Jammy) e instalar los paquetes.
 
 Configuración de Red y Replicación:
-Para permitir que el nodo sea accesible desde la red de Incus y que pueda formar parte de un replica set, se modificó el archivo de configuración /etc/mongod.conf:
+Para permitir que el nodo sea accesible desde la red de Incus y que pueda formar parte de un replica set, se modificó el archivo de configuración  `/etc/mongod.conf `:
 Se cambió el parámetro bindIp de 127.0.0.1 a 0.0.0.0.
 Se añadió la sección replication para definir el nombre del replica set:
 
-
-replication:
-  replSetName: "rs-shard1"
-
+```bash
+replication: `
+` replSetName: "rs-shard1"
+```
 
 Arranque del Servicio:
 Finalmente, se reinició y habilitó el servicio mongod para aplicar la nueva configuración.
 
+```bash
 systemctl restart mongod
 systemctl enable mongod
 systemctl status mongod
+```
 
 
 La correcta ejecución del servicio fue verificada con systemctl status mongod, confirmando que el servicio estaba active (running).
