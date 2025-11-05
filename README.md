@@ -208,3 +208,7 @@ El éxito de la operación se confirmó de dos maneras:
 El prompt de la consola cambió a rs-shard1 [primary]>, indicando que el nodo había asumido su rol principal.
 El comando rs.status() mostró a ambos miembros en la lista, uno como PRIMARY y el otro como SECONDARY.
 Con estos pasos, el Shard 1 queda completamente configurado como un clúster de base de datos con alta disponibilidad.
+
+
+### 2.3 Creación y Configuración del Shard 2 (rs-shard2)
+Siguiendo el mismo procedimiento exitoso del Shard 1, se procedió a construir el segundo fragmento de la base de datos.
