@@ -8,13 +8,18 @@ sudo systemctl status incus
 #verificar lista
 incus list
 
-#si uno esta parado
-incus start incus-ui
+
 
 #ver ip
 hostname -I
 https://<IP_DE_TU_WSL>:8443/
 
 
+#iniciar contenedor
+incus start incus-ui
+
 #crear contenedores
  incus launch images:ubuntu/jammy name
+
+#entrar a un contenedor
+incus exec shard1-primary -- bash

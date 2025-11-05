@@ -20,7 +20,7 @@
 * Verificar la configuración de la red puente por defecto (`incusbr0`).
 
 ### Fase 2: Arquitectura del Clúster de Sharding (MongoDB)
-* **Shards (Almacenes):**
+* **Shards (Almacenes):**a
     * Crear los contenedores para el **Shard 1 (Base de Datos 1)** e inicializar su conjunto de réplicas (mínimo 2 contenedores: primario y réplica).
     * Crear los contenedores para el **Shard 2 (Base de Datos 2)** e inicializar su conjunto de réplicas (mínimo 2 contenedores).
 * **Config Servers (Mapa):**
@@ -134,3 +134,50 @@ Se verificó la correcta creación y ejecución de los contenedores con `incus l
 | shard1-primary | RUNNING | 10.138.89.122 (eth0) | fd42:ef06:f622:9a08:1266:6aff:fe5f:937e (eth0) | CONTAINER | 0         |
 | shard1-replica | RUNNING | 10.138.89.241 (eth0) | fd42:ef06:f622:9a08:1266:6aff:fe41:9c80 (eth0) | CONTAINER | 0         |
 +----------------+---------+----------------------+------------------------------------------------+-----------+-----------+
+```
+
+## 2.2 Configuración de MongoDB en el Shard 1
+
+### 2.2.1 Instalación en el Nodo Primario (shard1-primary)
+
+Con los contenedores en funcionamiento, el siguiente paso es instalar y configurar MongoDB. El proceso se inició en el nodo designado como primario.
+
+**Acceso al contenedor:**  
+Se accedió a la terminal del contenedor con el comando:
+
+```bash
+incus exec shard1-primary -- bash
+```
+
+
+Instalación de MongoDB:
+Dentro del contenedor, se ejecutaron los comandos estándar para añadir el repositorio oficial de MongoDB 7.0 para Ubuntu 22.04 (Jammy) e instalar los paquetes.
+
+Configuración de Red y Replicación:
+Para permitir que el nodo sea accesible desde la red de Incus y que pueda formar parte de un replica set, se modificó el archivo de configuración /etc/mongod.conf:
+Se cambió el parámetro bindIp de 127.0.0.1 a 0.0.0.0.
+Se añadió la sección replication para definir el nombre del replica set:
+
+
+replication:
+  replSetName: "rs-shard1"
+
+
+Arranque del Servicio:
+Finalmente, se reinició y habilitó el servicio mongod para aplicar la nueva configuración.
+
+systemctl restart mongod
+systemctl enable mongod
+systemctl status mongod
+
+
+La correcta ejecución del servicio fue verificada con systemctl status mongod, confirmando que el servicio estaba active (running).
+
+
+
+### 2.2.2 Instalación en el Nodo de Réplica (shard1-replica)
+
+Se repitió el mismo proceso de instalación y configuración en el contenedor shard1-replica.
+Se aseguró que la configuración en /etc/mongod.conf fuera idéntica, especialmente manteniendo el mismo nombre de replSetName: "rs-shard1", para que ambos nodos puedan pertenecer al mismo conjunto.
+
+
