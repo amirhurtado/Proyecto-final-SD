@@ -1,0 +1,16 @@
+wsl
+
+sudo systemctl status incus
+# Si no está activo (es raro), usa:
+# sudo systemctl start incus
+
+
+#verificar lista
+incus list
+
+#si uno esta parado
+incus start incus-ui
+
+#ver ip
+hostname -I
+https://<IP_DE_TU_WSL>:8443/

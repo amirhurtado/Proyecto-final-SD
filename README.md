@@ -81,5 +81,14 @@ Dentro de este entorno se instaló y configuró **Incus**, que será el orquesta
 - Se ejecutó `incus admin init` para la configuración inicial:
 - Se verificó que el servicio `incus` estuviera activo y corriendo.
 - Se comprobó la instalación con `incus list`, confirmando un entorno limpio y funcional.
+- Se creó un contenedor (`incus-ui`) para alojar el gestor web `incus-ui-canonical`.
+- Se configuró el contenedor añadiendo los repositorios necesarios e instalando la UI mediante `apt`.
+- Se confirmó que el servicio `incusd` está activo y escuchando en el puerto **8443**.  
+- Prueba con `curl -k https://<IP_WSL>:8443` devolvió:
+  ```json
+  {"type":"sync","status":"Success","status_code":200,"operation":"","error_code":0,"error":"","metadata":["/1.0"]}
+- Al acceder desde el navegador a https://<IP_WSL>:8443, se visualizó correctamente la interfaz gráfica Incus UI Canonical con la pantalla de login “Login with TLS”.
+- Se genero y habilitó el certificado 
+
 
 
