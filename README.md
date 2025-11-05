@@ -183,3 +183,28 @@ Se repitió el mismo proceso de instalación y configuración en el contenedor s
 Se aseguró que la configuración en /etc/mongod.conf fuera idéntica, especialmente manteniendo el mismo nombre de replSetName: "rs-shard1", para que ambos nodos puedan pertenecer al mismo conjunto.
 
 
+
+
+
+
+### 2.2.3 Inicialización del Replica Set (rs-shard1)
+Con ambos nodos configurados, el paso final fue unirlos formalmente en un conjunto de réplicas.
+Se accedió a la consola de MongoDB (mongosh) desde el nodo primario (shard1-primary).
+Se ejecutó el comando rs.initiate() especificando los dos miembros del conjunto mediante sus direcciones IP internas:
+
+
+```bash
+JavaScript
+rs.initiate({
+  _id: "rs-shard1",
+  members: [
+    { _id: 0, host: "10.138.89.122:27017" },
+    { _id: 1, host: "10.138.89.241:27017" }
+  ]
+})
+```
+
+El éxito de la operación se confirmó de dos maneras:
+El prompt de la consola cambió a rs-shard1 [primary]>, indicando que el nodo había asumido su rol principal.
+El comando rs.status() mostró a ambos miembros en la lista, uno como PRIMARY y el otro como SECONDARY.
+Con estos pasos, el Shard 1 queda completamente configurado como un clúster de base de datos con alta disponibilidad.
