@@ -212,3 +212,109 @@ Con estos pasos, el Shard 1 queda completamente configurado como un clúster de 
 
 ### 2.3 Creación y Configuración del Shard 2 (rs-shard2)
 Siguiendo el mismo procedimiento exitoso del Shard 1, se procedió a construir el segundo fragmento de la base de datos.
+
+
+
+
+
+### 2.4 Creación de Componentes Centrales del Clúster
+
+Con los shards de datos ya configurados, se procedió a crear los componentes que gestionan y dirigen el clúster.
+
+#### 2.4.1 Configuración de los Servidores de Configuración (Config Servers)
+
+Para almacenar los metadatos del clúster se crearon tres contenedores: configsvr1, configsvr2 y configsvr3.
+Se instaló MongoDB en cada uno y se modificó su configuración (/etc/mongod.conf) para asignarles el rol específico de configsvr dentro del clúster de sharding.
+Además, se agruparon en su propio replica set llamado rs-config para garantizar la alta disponibilidad de los metadatos.
+
+La inicialización se realizó desde configsvr1 con el siguiente comando:
+
+
+```bash
+rs.initiate({
+  _id: "rs-config",
+  configsvr: true,
+  members: [
+    { _id: 0, host: "configsvr1:27017" },
+    { _id: 1, host: "configsvr2:27017" },
+    { _id: 2, host: "configsvr3:27017" }
+  ]
+})
+```
+
+
+El éxito se verificó observando el cambio del prompt a:
+
+rs-config [primary]>
+
+
+lo cual indica que el replica set de configuración quedó correctamente inicializado.
+
+#### 2.4.2 Despliegue del Router (mongos)
+
+El componente final, que actuará como la única puerta de entrada para la aplicación, es el Router (mongos).
+
+Contenedor:
+Se lanzó un nuevo contenedor llamado mongos-router.
+
+Instalación:
+Se instaló el paquete mongodb-org, que incluye el binario mongos:
+
+`apt update && apt install -y mongodb-org`
+
+
+Configuración:
+A diferencia de los nodos de datos, se creó un archivo de configuración específico en:
+
+`/etc/mongos.conf`
+
+
+Este archivo define la ubicación del replica set de los Config Servers y habilita la red externa:
+
+```bash
+sharding:
+  configDB: rs-config/configsvr1:27017,configsvr2:27017,configsvr3:27017
+
+net:
+  bindIp: 0.0.0.0
+  port: 27017
+```
+
+Servicio:
+Se creó un servicio de systemd personalizado para gestionar el proceso mongos en:
+
+`/etc/systemd/system/mongos.service`
+
+
+con el siguiente contenido:
+
+```bash
+[Unit]
+Description=MongoDB Router (mongos)
+After=network.target
+
+[Service]
+User=mongodb
+ExecStart=/usr/bin/mongos --config /etc/mongos.conf
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+```
+
+
+Lanzamiento:
+El servicio se inició y habilitó con:
+
+```bash
+systemctl start mongos
+systemctl enable mongos
+```
+
+
+La correcta ejecución se verificó con:
+
+`systemctl status mongos`
+
+
+confirmando un estado active (running).
