@@ -386,3 +386,24 @@ replication:
   replSetName: "rs-auth"
 ```
 Finalmente, se inicializó el conjunto desde el nodo primario. El cambio del prompt de la consola a rs-auth [primary]> confirmó el éxito de la operación. Con esto, se dispone de una base de datos de autenticación independiente, replicada y lista para ser consumida por el microservicio de autenticación.
+
+
+
+
+### 3.2 Implementación del Microservicio de Autenticación
+Con la base de datos de usuarios operativa, el siguiente paso fue desarrollar el microservicio encargado de gestionar la lógica de autenticación y registro.
+Creación del Contenedor: Se lanzó un nuevo contenedor, auth-server, destinado a alojar la aplicación de Node.js.
+Configuración del Entorno: Dentro del contenedor, se configuró el entorno de ejecución necesario:
+
+- Se instaló Node.js (versión 20.x) y su gestor de paquetes NPM utilizando el repositorio oficial de NodeSource.
+- Se creó una carpeta para el proyecto y se inicializó con npm init -y.
+- Se instalaron las dependencias clave para el servicio: express para el servidor, mongoose para la conexión a la base de datos, bcryptjs para el hashing de contraseñas, jsonwebtoken para la gestión de sesiones y cors para la comunicación entre servicios.
+- Desarrollo del Servidor Inicial: Se creó un archivo index.js con la estructura básica de un servidor Express. El punto más importante de esta configuración inicial fue la cadena de conexión a la base de datos:
+
+```bash
+const MONGO_URI = 'mongodb://<IP_PRIMARIO_AUTH>:<PORT>,<IP_REPLICA_AUTH>:<PORT>/usersDB?replicaSet=rs-auth';
+```
+
+Esta URI se conecta directamente al replica set rs-auth, proporcionando resiliencia automática. Si el nodo primario de la base de datos falla, mongoose gestionará la conexión con el nuevo primario sin necesidad de intervención manual.
+
+Prueba de Conectividad: Se ejecutó la aplicación con node index.js. La aparición de los mensajes Servidor corriendo en el puerto 4000 y ¡Conexión a MongoDB exitosa! en la consola confirmó que el microservicio se inició correctamente y estableció una conexión exitosa con el clúster de la base de datos de autenticación.
