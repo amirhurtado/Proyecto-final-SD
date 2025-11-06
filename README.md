@@ -316,5 +316,32 @@ La correcta ejecución se verificó con:
 
 `systemctl status mongos`
 
-
 confirmando un estado active (running).
+
+
+
+
+### 2.5 Ensamblaje y Verificación Final del Clúster
+Con todos los componentes individuales (shards, config servers y router) en línea, el paso final fue ensamblarlos en un único sistema coherente.
+#### 2.5.1 Detección y Corrección de Error de Configuración
+La conexión inicial se realizó desde la máquina anfitriona hacia el router mongos. Sin embargo, al ejecutar el comando sh.addShard(...), el sistema arrojó un error crítico:
+
+
+```code
+MongoServerError[Location50876]: Cannot run addShard on a node started without --shardsvr```
+
+El diagnóstico fue claro: los nodos de los *shards* (`shard1-primary`, `shard1-replica`, etc.) no habían sido configurados para identificarse a sí mismos como servidores de fragmentación.
+
+La solución consistió en modificar el archivo `/etc/mongod.conf` en los **cuatro** contenedores de los shards para añadir la directiva de rol de clúster:
+
+```yaml
+sharding:
+  clusterRole: shardsvr
+Tras añadir esta configuración y reiniciar el servicio mongod en cada uno de los cuatro nodos, el problema quedó resuelto.
+2.5.2 Adición de Shards al Clúster
+Con la corrección aplicada, se volvió a establecer la conexión con el router mongos y se ejecutaron con éxito los comandos para registrar cada replica set como un shard del clúster:
+code
+JavaScript
+sh.addShard("rs-shard1/10.138.89.122:27017")
+sh.addShard("rs-shard2/10.138.89.246:27017")
+La operación fue exitosa, devolviendo el mensaje { "ok": 1 }, confirmando que los shards fueron añadidos correctamente.
