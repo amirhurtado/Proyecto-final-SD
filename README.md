@@ -420,3 +420,15 @@ Se añadió un nuevo endpoint POST en la ruta /login. La lógica implementada si
 - Generación de JWT: Si las credenciales son correctas, se genera un JSON Web Token (JWT). Este token contiene información del usuario (su ID) y está "firmado" digitalmente con una clave secreta. El token se devuelve al cliente con un tiempo de expiración (ej. 1 hora), sirviendo como un "pase" temporal que el cliente puede usar para autenticarse en futuras peticiones a rutas protegidas.
 
 Al reiniciar la aplicación, el microservicio de autenticación quedó funcionalmente completo, proporcionando los mecanismos esenciales de registro, inicio de sesión y gestión de sesiones basadas en tokens. Con esto, concluye la Fase 3.
+
+
+## Fase 4: Desarrollo de la Aplicación Principal con Next.js
+### 4.1 Creación y Configuración del Entorno Frontend
+El desarrollo del frontend comenzó con la preparación del contenedor que alojará la aplicación web.
+- Lanzamiento del Contenedor: Se creó un nuevo contenedor llamado web-app para este propósito.
+- Instalación del Entorno: Al igual que con el microservicio de autenticación, se instaló Node.js (versión 20.x) y NPM dentro del contenedor.
+- Generación del Proyecto Next.js: Se utilizó la herramienta create-next-app para generar un nuevo proyecto con una configuración moderna y robusta. Se tomó la decisión de incluir:
+- TypeScript: para un tipado estático y un código más seguro.
+- Tailwind CSS: para un estilizado rápido y eficiente basado en utilidades.
+- App Router: el sistema de enrutamiento recomendado por Next.js para arquitecturas modernas.
+- Directorio src/: para una mejor organización del código fuente.
