@@ -432,3 +432,10 @@ El desarrollo del frontend comenzó con la preparación del contenedor que aloja
 - Tailwind CSS: para un estilizado rápido y eficiente basado en utilidades.
 - App Router: el sistema de enrutamiento recomendado por Next.js para arquitecturas modernas.
 - Directorio src/: para una mejor organización del código fuente.
+
+
+## 4.2 Inicio del Servidor de Desarrollo
+Para poder visualizar la aplicación web durante su construcción, se inició el servidor de desarrollo de Next.js.
+Modificación del Script de Inicio: Se editó el archivo package.json para modificar el script dev. Se le añadió el flag `-H 0.0.0.0 ("dev": "next dev -H 0.0.0.0")`. Este cambio es crucial para que el servidor de desarrollo, que se ejecuta dentro del contenedor, sea accesible desde la red externa y no solo desde localhost.
+Lanzamiento del Servidor: Se ejecutó npm run dev. El servidor se compiló y se inició correctamente, escuchando en el puerto 3000 en todas las interfaces de red.
+Verificación: Al acceder a la dirección IP del contenedor web-app seguida del puerto 3000 (ej. http://10.138.89.229:3000) desde un navegador en la máquina anfitriona, se visualizó correctamente la página de bienvenida de Next.js. Esto confirma que el entorno de desarrollo frontend está plenamente operativo.

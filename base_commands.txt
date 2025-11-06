@@ -23,3 +23,24 @@ incus start incus-ui
 
 #entrar a un contenedor
 incus exec shard1-primary -- bash
+
+
+
+#clonar contenedor en mi dispositivo
+incus file pull -r web-app/app ./web-app-app
+
+
+#package.json container
+"dev": "next dev -H 0.0.0.0"
+#package local
+"dev": "next dev",
+
+
+
+#container
+incus config device add web-app webapp3000 proxy listen=tcp:0.0.0.0:3000 connect=tcp:10.138.89.229:3000
+#local
+incus config device remove web-app webapp3000
+
+#subir cambios de una carpeta a un contenedor
+incus file push -r ./web-app-app/. web-app/app
