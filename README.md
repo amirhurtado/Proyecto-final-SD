@@ -434,8 +434,26 @@ El desarrollo del frontend comenzó con la preparación del contenedor que aloja
 - Directorio src/: para una mejor organización del código fuente.
 
 
-## 4.2 Inicio del Servidor de Desarrollo
+### 4.2 Inicio del Servidor de Desarrollo
 Para poder visualizar la aplicación web durante su construcción, se inició el servidor de desarrollo de Next.js.
 Modificación del Script de Inicio: Se editó el archivo package.json para modificar el script dev. Se le añadió el flag `-H 0.0.0.0 ("dev": "next dev -H 0.0.0.0")`. Este cambio es crucial para que el servidor de desarrollo, que se ejecuta dentro del contenedor, sea accesible desde la red externa y no solo desde localhost.
 Lanzamiento del Servidor: Se ejecutó npm run dev. El servidor se compiló y se inició correctamente, escuchando en el puerto 3000 en todas las interfaces de red.
 Verificación: Al acceder a la dirección IP del contenedor web-app seguida del puerto 3000 (ej. http://10.138.89.229:3000) desde un navegador en la máquina anfitriona, se visualizó correctamente la página de bienvenida de Next.js. Esto confirma que el entorno de desarrollo frontend está plenamente operativo.
+
+
+###  4.3 Implementación de la Lógica de Registro Frontend
+Con el servidor de desarrollo en marcha, se procedió a construir la interfaz y la lógica para la funcionalidad de registro de usuarios, conectándola con el microservicio de autenticación (auth-server).
+
+#### 4.3.1 Desafío de Conectividad y Solución de Arquitectura
+El primer intento de conectar el formulario de registro directamente desde el navegador al auth-server (usando su IP interna) falló. Errores como net::ERR_NAME_NOT_RESOLVED y net::ERR_CONNECTION_REFUSED confirmaron un principio fundamental de la arquitectura: el navegador del cliente (corriendo en la máquina anfitriona) no tiene acceso directo a la red privada de Incus donde residen los contenedores.
+
+La solución fue implementar un patrón de proxy/intermediario utilizando los Route Handlers de Next.js:
+- Frontend (Navegador): El formulario de registro ya no intenta comunicarse con el auth-server. En su lugar, realiza una petición POST a una ruta local de la propia aplicación web: /api/auth/register.
+- Backend (web-app): Se creó un Route Handler en src/app/api/auth/register/route.ts. Este código, que se ejecuta en el servidor dentro del contenedor web-app, recibe la petición del navegador.
+- Comunicación Interna: Al estar dentro de la red Incus, el Route Handler sí puede comunicarse con el auth-server. Realiza una petición axios interna a la dirección IP del auth-server (ej. `http://10.138.89.153:4000/register`), reenviando los datos del usuario.
+- Respuesta: Finalmente, el Route Handler recibe la respuesta del auth-server y la devuelve al navegador.
+- Este patrón no solo resuelve el problema de conectividad, sino que también mejora la seguridad al no exponer las direcciones de los microservicios internos al cliente final.
+
+#### 4.3.2 Creación del Componente de Registro
+Se instaló la librería axios para gestionar las peticiones HTTP. Se creó un componente React (RegisterForm.tsx) que gestiona el estado del formulario (email y contraseña) y encapsula la lógica para enviar los datos al endpoint /api/auth/register.
+Tras integrar este componente en la página principal, se realizó una prueba exitosa: se introdujeron los datos de un nuevo usuario y el sistema devolvió el mensaje Usuario registrado exitosamente, confirmando que el usuario fue creado correctamente en la base de datos de autenticación (rs-auth).

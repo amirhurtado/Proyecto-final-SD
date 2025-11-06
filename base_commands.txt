@@ -36,10 +36,10 @@ incus file pull -r web-app/app ./web-app-app
 "dev": "next dev",
 
 
-
-#container
+ 
+#container habilitar puerto 3000
 incus config device add web-app webapp3000 proxy listen=tcp:0.0.0.0:3000 connect=tcp:10.138.89.229:3000
-#local
+#local habilitar puerto 3000
 incus config device remove web-app webapp3000
 
 #subir cambios de una carpeta a un contenedor
