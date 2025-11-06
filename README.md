@@ -340,7 +340,9 @@ sharding:
 ```
 
 Tras añadir esta configuración y reiniciar el servicio mongod en cada uno de los cuatro nodos, el problema quedó resuelto.
-2.5.2 Adición de Shards al Clúster
+
+
+#### 2.5.2 Adición de Shards al Clúster
 
 
 Con la corrección aplicada, se volvió a establecer la conexión con el router mongos y se ejecutaron con éxito los comandos para registrar cada replica set como un shard del clúster:
