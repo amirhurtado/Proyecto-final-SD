@@ -194,7 +194,6 @@ Se ejecutó el comando rs.initiate() especificando los dos miembros del conjunto
 
 
 ```bash
-JavaScript
 rs.initiate({
   _id: "rs-shard1",
   members: [
@@ -338,9 +337,11 @@ La solución consistió en modificar el archivo `/etc/mongod.conf` en los **cuat
 ```yaml
 sharding:
   clusterRole: shardsvr
+```
+
 Tras añadir esta configuración y reiniciar el servicio mongod en cada uno de los cuatro nodos, el problema quedó resuelto.
 2.5.2 Adición de Shards al Clúster
-```
+
 
 Con la corrección aplicada, se volvió a establecer la conexión con el router mongos y se ejecutaron con éxito los comandos para registrar cada replica set como un shard del clúster:
 
