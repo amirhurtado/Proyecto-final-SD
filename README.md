@@ -457,3 +457,22 @@ La solución fue implementar un patrón de proxy/intermediario utilizando los Ro
 #### 4.3.2 Creación del Componente de Registro
 Se instaló la librería axios para gestionar las peticiones HTTP. Se creó un componente React (RegisterForm.tsx) que gestiona el estado del formulario (email y contraseña) y encapsula la lógica para enviar los datos al endpoint /api/auth/register.
 Tras integrar este componente en la página principal, se realizó una prueba exitosa: se introdujeron los datos de un nuevo usuario y el sistema devolvió el mensaje Usuario registrado exitosamente, confirmando que el usuario fue creado correctamente en la base de datos de autenticación (rs-auth).
+
+
+#### 4.3.3 Creación del Componente de Login y Gestión de Sesión
+Siguiendo el mismo patrón que con el registro, se implementó la funcionalidad de inicio de sesión:
+Route Handler: Se creó un nuevo intermediario en `/api/auth/login/route.ts` para gestionar las peticiones de login de forma segura.
+Componente Frontend: Se desarrolló el componente LoginForm.tsx. Este componente se encarga de:
+-  Enviar las credenciales del usuario al Route Handler.
+- Al recibir una respuesta exitosa, extrae el JSON Web Token (JWT).
+- Almacena el token en el localStorage del navegador. Este mecanismo permite que la sesión del usuario persista entre recargas de la página.
+
+#### 4.3.4 Reestructuración de Rutas y Páginas Protegidas
+Con la autenticación completamente funcional, se reestructuró la aplicación para reflejar un flujo de usuario real:
+- Se crearon páginas dedicadas para `/login` y `/register`, cada una utilizando su respectivo componente de formulario.
+- La página raíz (/) fue configurada para redirigir automáticamente a `/login`, estableciéndola como la entrada principal para usuarios no autenticados.
+- Se creó una página /home que actúa como el dashboard principal. Esta página está protegida:
+- Utiliza el hook useEffect de React para comprobar la existencia del token en localStorage al cargar la página.
+- Si el token no existe, redirige al usuario de vuelta a `/login`, impidiendo el acceso a contenido no autorizado.
+- También se implementó una función de cierre de sesión que elimina el token del localStorage y redirige al usuario a la página de login.
+Con estos cambios, la Fase 4 está prácticamente completa. Se dispone de una aplicación web funcional con un flujo de autenticación seguro y profesional, lista para ser conectada con la funcionalidad principal: el CRUD de productos.
