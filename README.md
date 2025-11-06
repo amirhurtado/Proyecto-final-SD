@@ -407,3 +407,16 @@ const MONGO_URI = 'mongodb://<IP_PRIMARIO_AUTH>:<PORT>,<IP_REPLICA_AUTH>:<PORT>/
 Esta URI se conecta directamente al replica set rs-auth, proporcionando resiliencia automática. Si el nodo primario de la base de datos falla, mongoose gestionará la conexión con el nuevo primario sin necesidad de intervención manual.
 
 Prueba de Conectividad: Se ejecutó la aplicación con node index.js. La aparición de los mensajes Servidor corriendo en el puerto 4000 y ¡Conexión a MongoDB exitosa! en la consola confirmó que el microservicio se inició correctamente y estableció una conexión exitosa con el clúster de la base de datos de autenticación.
+
+
+
+### 3.2.2 Implementación de la Lógica de Login y Emisión de Tokens (JWT)
+Con el registro de usuarios ya implementado, el paso final fue desarrollar la funcionalidad de inicio de sesión.
+Se añadió un nuevo endpoint POST en la ruta /login. La lógica implementada sigue las mejores prácticas de seguridad y autenticación moderna:
+
+- Recepción de Credenciales: El endpoint recibe el email y la password del usuario.
+- Verificación de Usuario: Busca en la base de datos un usuario que coincida con el email proporcionado. Si no lo encuentra, devuelve un error genérico de "Credenciales inválidas" para no revelar si un email está registrado o no.
+- Comparación de Contraseña: Si el usuario existe, utiliza bcrypt.compare() para comparar de forma segura la password recibida con el hash almacenado en la base de datos.
+- Generación de JWT: Si las credenciales son correctas, se genera un JSON Web Token (JWT). Este token contiene información del usuario (su ID) y está "firmado" digitalmente con una clave secreta. El token se devuelve al cliente con un tiempo de expiración (ej. 1 hora), sirviendo como un "pase" temporal que el cliente puede usar para autenticarse en futuras peticiones a rutas protegidas.
+
+Al reiniciar la aplicación, el microservicio de autenticación quedó funcionalmente completo, proporcionando los mecanismos esenciales de registro, inicio de sesión y gestión de sesiones basadas en tokens. Con esto, concluye la Fase 3.
