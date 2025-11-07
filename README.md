@@ -476,3 +476,24 @@ Con la autenticación completamente funcional, se reestructuró la aplicación p
 - Si el token no existe, redirige al usuario de vuelta a `/login`, impidiendo el acceso a contenido no autorizado.
 - También se implementó una función de cierre de sesión que elimina el token del localStorage y redirige al usuario a la página de login.
 Con estos cambios, la Fase 4 está prácticamente completa. Se dispone de una aplicación web funcional con un flujo de autenticación seguro y profesional, lista para ser conectada con la funcionalidad principal: el CRUD de productos.
+
+
+
+### 4.4 Implementación del CRUD de Productos
+El paso final de la Fase 4 fue integrar la funcionalidad de gestión de productos en la página protegida /home, conectándola con la base de datos shardeada a través del clúster de MongoDB.
+
+#### 4.4.1 Backend de Productos en la web-app
+Para mantener la arquitectura de intermediario y no exponer la base de datos, se crearon los componentes de backend necesarios dentro de la propia aplicación web-app:
+
+- Conexión a la Base de Datos Shardeada: Se creó un módulo reutilizable (src/lib/mongodb.ts) para gestionar la conexión a la base de datos. Es importante destacar que este módulo se conecta al router mongos, no a los shards directamente, permitiendo que mongos se encargue de dirigir las operaciones al shard correspondiente.
+- Modelo de Datos del Producto: Se definió un Schema de Mongoose (src/models/Product.ts) para la colección de productos. Este modelo incluye los campos name, price y, fundamentalmente, category, que es la shard key definida en la Fase 2.
+- Route Handlers para el CRUD: Se creó un endpoint API en  `/app/api/products/route.ts ` que maneja las operaciones principales:
+GET: Para obtener la lista completa de productos.
+POST: Para crear un nuevo producto.
+
+
+####  4.4.2 Integración en el Frontend
+La página  `/home ` se transformó en un dashboard interactivo para la gestión de productos:
+- Estado y Lógica: Se utilizaron hooks de React `(useState, useEffect)` para gestionar el estado de la lista de productos y los datos de los formularios.
+- Lectura de Datos (Read): Al cargar la página, se realiza una petición GET al endpoint /api/products para obtener y mostrar la lista actual de productos.
+- Creación de Datos (Create): Se implementó un formulario que permite a los usuarios introducir el nombre, precio y categoría de un nuevo producto. Al enviarlo, se realiza una petición POST a `/api/products`. Si la operación es exitosa, la lista de productos se vuelve a cargar para reflejar el cambio inmediatamente.
