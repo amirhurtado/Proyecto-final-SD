@@ -10,7 +10,7 @@ incus list
 
 
 
-#ver ip
+#ver ip pra incus-ui
 hostname -I
 https://<IP_DE_TU_WSL>:8443/
 

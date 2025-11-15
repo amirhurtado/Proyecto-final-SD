@@ -492,8 +492,24 @@ GET: Para obtener la lista completa de productos.
 POST: Para crear un nuevo producto.
 
 
-####  4.4.2 Integración en el Frontend
-La página  `/home ` se transformó en un dashboard interactivo para la gestión de productos:
-- Estado y Lógica: Se utilizaron hooks de React `(useState, useEffect)` para gestionar el estado de la lista de productos y los datos de los formularios.
-- Lectura de Datos (Read): Al cargar la página, se realiza una petición GET al endpoint /api/products para obtener y mostrar la lista actual de productos.
-- Creación de Datos (Create): Se implementó un formulario que permite a los usuarios introducir el nombre, precio y categoría de un nuevo producto. Al enviarlo, se realiza una petición POST a `/api/products`. Si la operación es exitosa, la lista de productos se vuelve a cargar para reflejar el cambio inmediatamente.
+#### 4.4.2 Integración del CRUD Completo en el Frontend
+La página `/home` se transformó en un dashboard interactivo y completo para la gestión de productos, cumpliendo con todos los requisitos de datos.
+
+- Ampliación del Modelo de Datos: Para cumplir con las especificaciones del proyecto, el "contrato" de datos del producto fue extendido. Se actualizó el Modelo de Mongoose, la Interfaz de TypeScript y los componentes de formulario para incluir los campos `technical_details` (opcional) y `imageUrl` (obligatorio).
+
+- Implementación de Subida de Imágenes a Cloudinary: Se implementó un sistema de subida de archivos seguro y eficiente, siguiendo las mejores prácticas para no exponer claves secretas en el lado del cliente:
+Backend Seguro: Se creó un endpoint de API dedicado `/api/sign-image` en la web-app. Este endpoint utiliza las credenciales seguras de Cloudinary (guardadas en variables de entorno) para generar una firma digital única para cada solicitud de subida.
+
+- Componente Frontend (ImageUploader): Se desarrolló un componente de React reutilizable que gestiona la interacción del usuario. Al seleccionar un archivo, este componente primero solicita la firma a la API interna y luego utiliza esa firma para autenticar la subida del archivo directamente a la API de Cloudinary.
+Flujo de Datos: Una vez que Cloudinary confirma la subida, devuelve una URL segura `secure_url`. Esta URL se almacena en el estado del formulario principal y se guarda en la base de datos de MongoDB junto con el resto de la información del producto.
+
+- CRUD Funcional (Crear, Leer, Actualizar, Borrar):
+
+##### La Lectura (Read) se realiza al cargar la página, mostrando la lista de productos con sus nuevas imágenes. 
+##### La Creación (Create) se gestiona a través de un formulario avanzado que ahora incluye la subida de la imagen.
+##### La Actualización (Update) se realiza mediante un diálogo modal (Dialog de Shadcn), permitiendo una edición fluida de los detalles del producto sin cambiar de página.
+
+##### El Borrado (Delete) se confirma a través de un diálogo de alerta (AlertDialog de Shadcn) para prevenir eliminaciones accidentales.
+
+
+La prueba final fue exitosa, validando el flujo completo de la aplicación: desde el registro y login de un usuario, hasta la creación, visualización, actualización y eliminación de productos con imágenes en una base de datos distribuida.
