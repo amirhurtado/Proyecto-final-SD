@@ -44,3 +44,6 @@ incus config device remove web-app webapp3000
 
 #subir cambios de una carpeta a un contenedor
 incus file push -r ./web-app-app/. web-app/app
+
+#lanzar tuneling
+ngrok http 3000

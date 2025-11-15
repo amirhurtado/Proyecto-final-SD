@@ -513,3 +513,35 @@ Flujo de Datos: Una vez que Cloudinary confirma la subida, devuelve una URL segu
 
 
 La prueba final fue exitosa, validando el flujo completo de la aplicación: desde el registro y login de un usuario, hasta la creación, visualización, actualización y eliminación de productos con imágenes en una base de datos distribuida.
+
+
+
+
+## Fase Final: Despliegue y Exposición a Internet
+Para cumplir con el requisito final de hacer accesible el proyecto en línea, se evaluaron diversas estrategias de exposición de servicios ejecutándose en un entorno WSL.
+
+### 5.1 Selección de la Estrategia de Despliegue
+
+Dadas las opciones (Port Forwarding, VPN, Tunneling), se eligió el Tunneling a través del servicio ngrok. Esta decisión se basó en que es, con diferencia, la metodología más sencilla, rápida y segura para este caso de uso, ya que no requiere complejas configuraciones de red en el router local o el firewall de Windows y proporciona una URL pública y segura (HTTPS) de forma instantánea.
+
+### 5.2 Preparación de la Aplicación para Producción
+Antes de la exposición, fue fundamental preparar la aplicación web-app para un entorno de producción, ya que el servidor de desarrollo (npm run dev) no está optimizado para el rendimiento ni la estabilidad.
+Compilación (Build): Se accedió al contenedor web-app y se ejecutó el comando npm run build. Este proceso compiló el código de Next.js, optimizando los assets, el código JavaScript y las dependencias para un rendimiento máximo.
+Inicio (Start): Posteriormente, se inició el servidor de producción con el comando npm run start. La aplicación quedó sirviéndose en el puerto 3000 en su versión de producción, lista para recibir tráfico.
+
+### 5.3 Configuración del Servicio de Tunneling (ngrok)
+Se instaló y configuró el cliente de ngrok directamente en el entorno de Ubuntu/WSL:
+
+- Instalación: Se añadió el repositorio oficial de ngrok y se instaló el cliente mediante el gestor de paquetes apt.
+- Autenticación: Se creó una cuenta gratuita en el dashboard de ngrok para obtener un authtoken único. Este token se configuró en el cliente local con el comando ngrok config add-authtoken, vinculando la terminal con la cuenta de usuario.
+
+### 5.4 Lanzamiento y Verificación
+El lanzamiento final se realizó ejecutando un único comando en una nueva terminal de WSL:
+
+```bash
+ngrok http 3000
+```
+
+ngrok estableció exitosamente un túnel seguro desde el puerto 3000 del entorno WSL hacia una URL pública y aleatoria proporcionada por su servicio https://brentley-unaffable-vindicatedly.ngrok-free.dev. 
+
+La verificación fue un éxito: al acceder a esta URL pública desde un navegador, la aplicación funcionó a la perfección. Se comprobó el flujo completo, incluyendo el registro de nuevos usuarios, el inicio de sesión, y todas las operaciones del CRUD de productos (Crear, Leer, Actualizar y Borrar con subida de imágenes), confirmando que todos los contenedores y servicios interconectados respondían correctamente a través del túnel.
